@@ -89,6 +89,19 @@ Para a criação dos fluxos conversacionais aqui representados, houve a necessid
 - nsp_quickreply_anonizado
 - nsp_menu_principal
 
+![image](https://github.com/user-attachments/assets/a51517f2-003b-4b56-860b-e1108ae94aa5)
+
+![image](https://github.com/user-attachments/assets/62e2b3b3-d717-4051-8cad-5e779594a042)
+
+![image](https://github.com/user-attachments/assets/7bf3bb52-5be6-4d0e-90ba-e6e03f9dcb88)
+
+![image](https://github.com/user-attachments/assets/6e15d5f0-91a0-4d01-8dc0-68367242eecb)
+
+![image](https://github.com/user-attachments/assets/7879b139-09cb-467e-a4c5-4550305a9ffe)
+
+![image](https://github.com/user-attachments/assets/a2e11834-e337-4c1b-a051-7b1771d4dba8)
+
+
 Infelizmente não há como exportar e versionar a criação desses componentes através da plataforma.
 Cada componente criado adquire um _Content template SID_ que deverá ser informado (substituído) nos fluxos que estão versionados aqui no projeto.
 O Twilio disponibiliza um saldo padrão para novas contas criadas, e um Sandbox que pode ser usado para desenvolvimento de novas soluções antes que haja um número oficial de whatsapp para ser usado.
