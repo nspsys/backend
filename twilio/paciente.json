@@ -1,0 +1,291 @@
+{
+  "description": "paciente",
+  "states": [
+    {
+      "name": "Trigger",
+      "type": "trigger",
+      "transitions": [
+        {
+          "event": "incomingMessage"
+        },
+        {
+          "event": "incomingCall"
+        },
+        {
+          "event": "incomingConversationMessage"
+        },
+        {
+          "event": "incomingRequest"
+        },
+        {
+          "next": "notificacao_paciente_nome",
+          "event": "incomingParent"
+        }
+      ],
+      "properties": {
+        "offset": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "name": "notificacao_paciente_nome",
+      "type": "send-and-wait-for-reply",
+      "transitions": [
+        {
+          "next": "v_notificacao_paciente_nome",
+          "event": "incomingMessage"
+        },
+        {
+          "event": "timeout"
+        },
+        {
+          "event": "deliveryFailure"
+        }
+      ],
+      "properties": {
+        "offset": {
+          "x": 30,
+          "y": 260
+        },
+        "service": "{{trigger.message.InstanceSid}}",
+        "channel": "{{trigger.message.ChannelSid}}",
+        "from": "{{flow.channel.address}}",
+        "message_type": "custom",
+        "body": "Informe o nome completo do paciente",
+        "timeout": "3600"
+      }
+    },
+    {
+      "name": "v_notificacao_paciente_nome",
+      "type": "set-variables",
+      "transitions": [
+        {
+          "next": "notificacao_paciente_nascimento",
+          "event": "next"
+        }
+      ],
+      "properties": {
+        "variables": [
+          {
+            "type": "string",
+            "value": "{{widgets.notificacao_paciente_nome.inbound.Body}}",
+            "key": "notificacao_paciente_nome"
+          }
+        ],
+        "offset": {
+          "x": 30,
+          "y": 510
+        }
+      }
+    },
+    {
+      "name": "notificacao_paciente_nascimento",
+      "type": "send-and-wait-for-reply",
+      "transitions": [
+        {
+          "next": "v_notificacao_paciente_nascimento",
+          "event": "incomingMessage"
+        },
+        {
+          "event": "timeout"
+        },
+        {
+          "event": "deliveryFailure"
+        }
+      ],
+      "properties": {
+        "offset": {
+          "x": 620,
+          "y": 270
+        },
+        "service": "{{trigger.message.InstanceSid}}",
+        "channel": "{{trigger.message.ChannelSid}}",
+        "from": "{{flow.channel.address}}",
+        "message_type": "custom",
+        "body": "Me informe a data de nascimento do paciente? De preferência, use o formato dd/mm/yyyy, por exemplo, 01/01/2000",
+        "timeout": "3600"
+      }
+    },
+    {
+      "name": "v_notificacao_paciente_nascimento",
+      "type": "set-variables",
+      "transitions": [
+        {
+          "next": "notificacao_paciente_genero",
+          "event": "next"
+        }
+      ],
+      "properties": {
+        "variables": [
+          {
+            "type": "string",
+            "value": "{{widgets.notificacao_paciente_nascimento.inbound.Body}}",
+            "key": "notificacao_paciente_nascimento"
+          }
+        ],
+        "offset": {
+          "x": 630,
+          "y": 510
+        }
+      }
+    },
+    {
+      "name": "notificacao_paciente_genero",
+      "type": "send-and-wait-for-reply",
+      "transitions": [
+        {
+          "next": "v_notificacao_paciente_genero",
+          "event": "incomingMessage"
+        },
+        {
+          "event": "timeout"
+        },
+        {
+          "event": "deliveryFailure"
+        }
+      ],
+      "properties": {
+        "offset": {
+          "x": 60,
+          "y": 810
+        },
+        "service": "{{trigger.message.InstanceSid}}",
+        "channel": "{{trigger.message.ChannelSid}}",
+        "from": "{{flow.channel.address}}",
+        "message_type": "custom",
+        "body": "Me informe o genero do paciente",
+        "timeout": "3600"
+      }
+    },
+    {
+      "name": "v_notificacao_paciente_genero",
+      "type": "set-variables",
+      "transitions": [
+        {
+          "next": "notificacao_paciente_cpf",
+          "event": "next"
+        }
+      ],
+      "properties": {
+        "variables": [
+          {
+            "type": "string",
+            "value": "{{widgets.notificacao_paciente_genero.inbound.Body}}",
+            "key": "notificacao_paciente_genero"
+          }
+        ],
+        "offset": {
+          "x": 70,
+          "y": 1070
+        }
+      }
+    },
+    {
+      "name": "notificacao_paciente_cpf",
+      "type": "send-and-wait-for-reply",
+      "transitions": [
+        {
+          "next": "v_notificacao_paciente_cpf",
+          "event": "incomingMessage"
+        },
+        {
+          "event": "timeout"
+        },
+        {
+          "event": "deliveryFailure"
+        }
+      ],
+      "properties": {
+        "offset": {
+          "x": 670,
+          "y": 830
+        },
+        "service": "{{trigger.message.InstanceSid}}",
+        "channel": "{{trigger.message.ChannelSid}}",
+        "from": "{{flow.channel.address}}",
+        "message_type": "custom",
+        "body": "Me informe o CPF do paciente",
+        "timeout": "3600"
+      }
+    },
+    {
+      "name": "v_notificacao_paciente_cpf",
+      "type": "set-variables",
+      "transitions": [
+        {
+          "next": "notificacao_notificante_paciente_relacao",
+          "event": "next"
+        }
+      ],
+      "properties": {
+        "variables": [
+          {
+            "type": "string",
+            "value": "{{widgets.notificacao_paciente_cpf.inbound.Body}}",
+            "key": "notificacao_paciente_cpf"
+          }
+        ],
+        "offset": {
+          "x": 680,
+          "y": 1080
+        }
+      }
+    },
+    {
+      "name": "notificacao_notificante_paciente_relacao",
+      "type": "send-and-wait-for-reply",
+      "transitions": [
+        {
+          "next": "v_notificacao_notificante_paciente_relacao",
+          "event": "incomingMessage"
+        },
+        {
+          "event": "timeout"
+        },
+        {
+          "event": "deliveryFailure"
+        }
+      ],
+      "properties": {
+        "offset": {
+          "x": 80,
+          "y": 1330
+        },
+        "service": "{{trigger.message.InstanceSid}}",
+        "channel": "{{trigger.message.ChannelSid}}",
+        "from": "{{flow.channel.address}}",
+        "message_type": "custom",
+        "body": "Você tem alguma relação com o paciente?",
+        "timeout": "3600"
+      }
+    },
+    {
+      "name": "v_notificacao_notificante_paciente_relacao",
+      "type": "set-variables",
+      "transitions": [
+        {
+          "event": "next"
+        }
+      ],
+      "properties": {
+        "variables": [
+          {
+            "type": "string",
+            "value": "{{widgets.notificacao_notificante_paciente_relacao.inbound.Body}}",
+            "key": "notificacao_notificante_paciente_relacao"
+          }
+        ],
+        "offset": {
+          "x": 720,
+          "y": 1370
+        }
+      }
+    }
+  ],
+  "initial_state": "Trigger",
+  "flags": {
+    "allow_concurrent_calls": true
+  }
+}

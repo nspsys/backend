@@ -1,0 +1,1026 @@
+{
+  "description": "Fluxo Principal",
+  "states": [
+    {
+      "name": "Trigger",
+      "type": "trigger",
+      "transitions": [
+        {
+          "next": "p1_menu_inicial",
+          "event": "incomingMessage"
+        },
+        {
+          "event": "incomingCall"
+        },
+        {
+          "event": "incomingConversationMessage"
+        },
+        {
+          "event": "incomingRequest"
+        },
+        {
+          "event": "incomingParent"
+        }
+      ],
+      "properties": {
+        "offset": {
+          "x": -370,
+          "y": -110
+        }
+      }
+    },
+    {
+      "name": "v2_notificacao_notificante_identificado",
+      "type": "set-variables",
+      "transitions": [
+        {
+          "next": "gtw2_notificacao_notificanteidentificado",
+          "event": "next"
+        }
+      ],
+      "properties": {
+        "variables": [
+          {
+            "type": "string",
+            "value": "{{widgets.p2_notificacao_notificante_identificado.inbound.Body}}",
+            "key": "notificacao_notificante_identificado"
+          }
+        ],
+        "offset": {
+          "x": -880,
+          "y": 1080
+        }
+      }
+    },
+    {
+      "name": "p1_menu_inicial",
+      "type": "send-and-wait-for-reply",
+      "transitions": [
+        {
+          "next": "v1_notificacao_from",
+          "event": "incomingMessage"
+        },
+        {
+          "event": "timeout"
+        },
+        {
+          "event": "deliveryFailure"
+        }
+      ],
+      "properties": {
+        "offset": {
+          "x": -370,
+          "y": 120
+        },
+        "service": "{{trigger.message.InstanceSid}}",
+        "channel": "{{trigger.message.ChannelSid}}",
+        "from": "{{flow.channel.address}}",
+        "message_type": "content_template",
+        "content_sid": "HX0e64fe7de48c3dfc2dc8ff42c110a898",
+        "body": "Bem vindo ao Núcleo de Segurança do Paciente!\nSelecione uma das opções abaixo:\n1. Notificar evento\n2. Acompanhar protocolo",
+        "timeout": "3600"
+      }
+    },
+    {
+      "name": "p2_notificacao_notificante_identificado",
+      "type": "send-and-wait-for-reply",
+      "transitions": [
+        {
+          "next": "v2_notificacao_notificante_identificado",
+          "event": "incomingMessage"
+        },
+        {
+          "event": "timeout"
+        },
+        {
+          "event": "deliveryFailure"
+        }
+      ],
+      "properties": {
+        "offset": {
+          "x": -890,
+          "y": 840
+        },
+        "service": "{{trigger.message.InstanceSid}}",
+        "channel": "{{trigger.message.ChannelSid}}",
+        "from": "{{flow.channel.address}}",
+        "message_type": "content_template",
+        "content_sid": "HX97b2ab88cf51d221520d29ae52d9edf8",
+        "body": "Deseja se identificar?\n1. SIM \n2. NÃO",
+        "timeout": "3600"
+      }
+    },
+    {
+      "name": "gtw1_menu_inicial",
+      "type": "split-based-on",
+      "transitions": [
+        {
+          "event": "noMatch"
+        },
+        {
+          "next": "p2_notificacao_notificante_identificado",
+          "event": "match",
+          "conditions": [
+            {
+              "friendly_name": "If value equal_to 1",
+              "arguments": ["{{widgets.p1_menu_inicial.inbound.Body}}"],
+              "type": "equal_to",
+              "value": "1"
+            }
+          ]
+        },
+        {
+          "next": "consultar_protocolo",
+          "event": "match",
+          "conditions": [
+            {
+              "friendly_name": "If value equal_to 2",
+              "arguments": ["{{widgets.p1_menu_inicial.inbound.Body}}"],
+              "type": "equal_to",
+              "value": "2"
+            }
+          ]
+        }
+      ],
+      "properties": {
+        "input": "{{widgets.p1_menu_inicial.inbound.Body}}",
+        "offset": {
+          "x": -190,
+          "y": 460
+        }
+      }
+    },
+    {
+      "name": "consultar_protocolo",
+      "type": "send-and-wait-for-reply",
+      "transitions": [
+        {
+          "next": "function_1",
+          "event": "incomingMessage"
+        },
+        {
+          "event": "timeout"
+        },
+        {
+          "event": "deliveryFailure"
+        }
+      ],
+      "properties": {
+        "offset": {
+          "x": 70,
+          "y": 710
+        },
+        "service": "{{trigger.message.InstanceSid}}",
+        "channel": "{{trigger.message.ChannelSid}}",
+        "from": "{{flow.channel.address}}",
+        "message_type": "custom",
+        "body": "Me informe o número do seu protocolo?",
+        "timeout": "3600"
+      }
+    },
+    {
+      "name": "gtw2_notificacao_notificanteidentificado",
+      "type": "split-based-on",
+      "transitions": [
+        {
+          "event": "noMatch"
+        },
+        {
+          "next": "sub_notificante",
+          "event": "match",
+          "conditions": [
+            {
+              "friendly_name": "If value equal_to SIM",
+              "arguments": [
+                "{{flow.variables.notificacao_notificante_identificado}}"
+              ],
+              "type": "equal_to",
+              "value": "SIM"
+            }
+          ]
+        },
+        {
+          "next": "p8_notificacao_paciente",
+          "event": "match",
+          "conditions": [
+            {
+              "friendly_name": "If value equal_to NÃO",
+              "arguments": [
+                "{{flow.variables.notificacao_notificante_identificado}}"
+              ],
+              "type": "equal_to",
+              "value": "NÃO"
+            }
+          ]
+        }
+      ],
+      "properties": {
+        "input": "{{flow.variables.notificacao_notificante_identificado}}",
+        "offset": {
+          "x": 580,
+          "y": 1310
+        }
+      }
+    },
+    {
+      "name": "v3_notificacao_notificante",
+      "type": "set-variables",
+      "transitions": [
+        {
+          "next": "intermediaria",
+          "event": "next"
+        }
+      ],
+      "properties": {
+        "variables": [
+          {
+            "type": "string",
+            "value": "{{widgets.sub_notificante.notificante_nome}}",
+            "key": "notificacao_notificante_nome"
+          },
+          {
+            "type": "string",
+            "value": "{{widgets.sub_notificante.notificante_mail}}",
+            "key": "notificacao_notificante_mail"
+          }
+        ],
+        "offset": {
+          "x": -800,
+          "y": 1770
+        }
+      }
+    },
+    {
+      "name": "p5_notificacao_notificante_profissional",
+      "type": "send-and-wait-for-reply",
+      "transitions": [
+        {
+          "next": "v_notificacao_notificante_profissional",
+          "event": "incomingMessage"
+        },
+        {
+          "event": "timeout"
+        },
+        {
+          "event": "deliveryFailure"
+        }
+      ],
+      "properties": {
+        "offset": {
+          "x": 10,
+          "y": 1580
+        },
+        "content_variables": [
+          {
+            "value": "{{flow.variables.notificacao_notificante_nome}}",
+            "key": "notificante"
+          }
+        ],
+        "service": "{{trigger.message.InstanceSid}}",
+        "channel": "{{trigger.message.ChannelSid}}",
+        "from": "{{flow.channel.address}}",
+        "message_type": "content_template",
+        "content_sid": "HX225118b9885635e084cbda54af40ed47",
+        "body": "{{flow.variables.notificacao_notificante_nome}}  você é profissional que atua em estabelecimento que presta serviço de saúde?\n1. SIM\n2. NÃO",
+        "timeout": "3600"
+      }
+    },
+    {
+      "name": "gtw3_notificacao_notificante_profissional",
+      "type": "split-based-on",
+      "transitions": [
+        {
+          "event": "noMatch"
+        },
+        {
+          "next": "sub_profissional",
+          "event": "match",
+          "conditions": [
+            {
+              "friendly_name": "If value equal_to SIM",
+              "arguments": [
+                "{{flow.variables.notificacao_notificante_profissional}}"
+              ],
+              "type": "equal_to",
+              "value": "SIM"
+            }
+          ]
+        },
+        {
+          "next": "p8_notificacao_paciente",
+          "event": "match",
+          "conditions": [
+            {
+              "friendly_name": "If value equal_to NÃO",
+              "arguments": [
+                "{{flow.variables.notificacao_notificante_profissional}}"
+              ],
+              "type": "equal_to",
+              "value": "NÃO"
+            }
+          ]
+        }
+      ],
+      "properties": {
+        "input": "{{flow.variables.notificacao_notificante_profissional}}",
+        "offset": {
+          "x": 30,
+          "y": 2050
+        }
+      }
+    },
+    {
+      "name": "p8_notificacao_paciente",
+      "type": "send-and-wait-for-reply",
+      "transitions": [
+        {
+          "next": "v_notificacao_paciente",
+          "event": "incomingMessage"
+        },
+        {
+          "event": "timeout"
+        },
+        {
+          "event": "deliveryFailure"
+        }
+      ],
+      "properties": {
+        "offset": {
+          "x": 850,
+          "y": 2650
+        },
+        "service": "{{trigger.message.InstanceSid}}",
+        "channel": "{{trigger.message.ChannelSid}}",
+        "from": "{{flow.channel.address}}",
+        "message_type": "content_template",
+        "content_sid": "HX670ac58d2897a3589cffea6396e81be3",
+        "body": "Houve paciente envolvido?\n1. SIM\n2. NÃO",
+        "timeout": "3600"
+      }
+    },
+    {
+      "name": "gtw4_notificacao_paciente",
+      "type": "split-based-on",
+      "transitions": [
+        {
+          "event": "noMatch"
+        },
+        {
+          "next": "sub_paciente",
+          "event": "match",
+          "conditions": [
+            {
+              "friendly_name": "If value equal_to SIM",
+              "arguments": ["{{flow.variables.notificacao_paciente}}"],
+              "type": "equal_to",
+              "value": "SIM"
+            }
+          ]
+        },
+        {
+          "next": "p14_notificacao_ocorrencia",
+          "event": "match",
+          "conditions": [
+            {
+              "friendly_name": "If value equal_to NÃO",
+              "arguments": ["{{flow.variables.notificacao_paciente}}"],
+              "type": "equal_to",
+              "value": "NÃO"
+            }
+          ]
+        }
+      ],
+      "properties": {
+        "input": "{{flow.variables.notificacao_paciente}}",
+        "offset": {
+          "x": -180,
+          "y": 2710
+        }
+      }
+    },
+    {
+      "name": "send_message_1",
+      "type": "send-message",
+      "transitions": [
+        {
+          "event": "sent"
+        },
+        {
+          "event": "failed"
+        }
+      ],
+      "properties": {
+        "offset": {
+          "x": -1280,
+          "y": 3600
+        },
+        "service": "{{trigger.message.InstanceSid}}",
+        "channel": "{{trigger.message.ChannelSid}}",
+        "from": "{{flow.channel.address}}",
+        "message_type": "custom",
+        "to": "{{contact.channel.address}}",
+        "body": "notificacao recebida. obrigado!\n{{widgets.http_1.body}}"
+      }
+    },
+    {
+      "name": "v13_notificacao_notificante_paciente_relacionamento",
+      "type": "set-variables",
+      "transitions": [
+        {
+          "next": "p14_notificacao_ocorrencia",
+          "event": "next"
+        }
+      ],
+      "properties": {
+        "variables": [
+          {
+            "type": "string",
+            "value": "{{widgets.sub_paciente.notificacao_notificante_paciente_relacao}}",
+            "key": "notificacao_notificante_paciente_relacionamento"
+          },
+          {
+            "type": "string",
+            "value": "{{widgets.sub_paciente.notificacao_paciente_nome}}",
+            "key": "notificacao_paciente_nome"
+          },
+          {
+            "type": "string",
+            "value": "{{widgets.sub_paciente.notificacao_paciente_nascimento}}",
+            "key": "notificacao_paciente_nascimento"
+          },
+          {
+            "type": "string",
+            "value": "{{widgets.sub_paciente.notificacao_paciente_genero}}",
+            "key": "notificacao_paciente_genero"
+          }
+        ],
+        "offset": {
+          "x": -1260,
+          "y": 2720
+        }
+      }
+    },
+    {
+      "name": "p14_notificacao_ocorrencia",
+      "type": "send-and-wait-for-reply",
+      "transitions": [
+        {
+          "next": "v14_notificacao_ocorrencia",
+          "event": "incomingMessage"
+        },
+        {
+          "event": "timeout"
+        },
+        {
+          "event": "deliveryFailure"
+        }
+      ],
+      "properties": {
+        "offset": {
+          "x": -1270,
+          "y": 3170
+        },
+        "service": "{{trigger.message.InstanceSid}}",
+        "channel": "{{trigger.message.ChannelSid}}",
+        "from": "{{flow.channel.address}}",
+        "message_type": "custom",
+        "body": "Me conte numa única mensagem o que aconteceu",
+        "timeout": "3600"
+      }
+    },
+    {
+      "name": "v14_notificacao_ocorrencia",
+      "type": "set-variables",
+      "transitions": [
+        {
+          "next": "p15_notificacao_ocorrencia_data",
+          "event": "next"
+        }
+      ],
+      "properties": {
+        "variables": [
+          {
+            "type": "string",
+            "value": "{{widgets.p14_notificacao_ocorrencia.inbound.Body}}",
+            "key": "notificacao_ocorrencia"
+          }
+        ],
+        "offset": {
+          "x": -670,
+          "y": 3180
+        }
+      }
+    },
+    {
+      "name": "p15_notificacao_ocorrencia_data",
+      "type": "send-and-wait-for-reply",
+      "transitions": [
+        {
+          "next": "v15_notificacao_ocorrencia_data",
+          "event": "incomingMessage"
+        },
+        {
+          "event": "timeout"
+        },
+        {
+          "event": "deliveryFailure"
+        }
+      ],
+      "properties": {
+        "offset": {
+          "x": -10,
+          "y": 3220
+        },
+        "service": "{{trigger.message.InstanceSid}}",
+        "channel": "{{trigger.message.ChannelSid}}",
+        "from": "{{flow.channel.address}}",
+        "message_type": "custom",
+        "body": "Em que dia isso aconteceu?\ndd/mm/aaaa",
+        "timeout": "3600"
+      }
+    },
+    {
+      "name": "v15_notificacao_ocorrencia_data",
+      "type": "set-variables",
+      "transitions": [
+        {
+          "next": "p16_notificacao_imagem",
+          "event": "next"
+        }
+      ],
+      "properties": {
+        "variables": [
+          {
+            "type": "string",
+            "value": "{{widgets.p15_notificacao_ocorrencia_data.inbound.Body}}",
+            "key": "notificacao_ocorrencia_data"
+          }
+        ],
+        "offset": {
+          "x": 640,
+          "y": 3250
+        }
+      }
+    },
+    {
+      "name": "p16_notificacao_imagem",
+      "type": "send-and-wait-for-reply",
+      "transitions": [
+        {
+          "next": "gtw5_notificacao_imagem",
+          "event": "incomingMessage"
+        },
+        {
+          "event": "timeout"
+        },
+        {
+          "event": "deliveryFailure"
+        }
+      ],
+      "properties": {
+        "offset": {
+          "x": 650,
+          "y": 3580
+        },
+        "service": "{{trigger.message.InstanceSid}}",
+        "channel": "{{trigger.message.ChannelSid}}",
+        "from": "{{flow.channel.address}}",
+        "message_type": "content_template",
+        "content_sid": "HX008df37c82042fab6e65c2e42557ab06",
+        "body": "Deseja anexar uma imagem?\n1. SIM\n2. NÃO",
+        "timeout": "3600"
+      }
+    },
+    {
+      "name": "gtw5_notificacao_imagem",
+      "type": "split-based-on",
+      "transitions": [
+        {
+          "event": "noMatch"
+        },
+        {
+          "next": "notificacao_submit",
+          "event": "match",
+          "conditions": [
+            {
+              "friendly_name": "If value equal_to NÃO",
+              "arguments": ["{{widgets.p16_notificacao_imagem.inbound.Body}}"],
+              "type": "equal_to",
+              "value": "NÃO"
+            }
+          ]
+        },
+        {
+          "next": "receber_imagem",
+          "event": "match",
+          "conditions": [
+            {
+              "friendly_name": "If value equal_to SIM",
+              "arguments": ["{{widgets.p16_notificacao_imagem.inbound.Body}}"],
+              "type": "equal_to",
+              "value": "SIM"
+            }
+          ]
+        }
+      ],
+      "properties": {
+        "input": "{{widgets.p16_notificacao_imagem.inbound.Body}}",
+        "offset": {
+          "x": -100,
+          "y": 3570
+        }
+      }
+    },
+    {
+      "name": "send_message_2",
+      "type": "send-message",
+      "transitions": [
+        {
+          "event": "sent"
+        },
+        {
+          "event": "failed"
+        }
+      ],
+      "properties": {
+        "offset": {
+          "x": 820,
+          "y": 520
+        },
+        "service": "{{trigger.message.InstanceSid}}",
+        "channel": "{{trigger.message.ChannelSid}}",
+        "from": "{{flow.channel.address}}",
+        "message_type": "custom",
+        "to": "{{contact.channel.address}}",
+        "body": "SUCESSO\n{{widgets.function_1.body}}"
+      }
+    },
+    {
+      "name": "send_message_3",
+      "type": "send-message",
+      "transitions": [
+        {
+          "event": "sent"
+        },
+        {
+          "event": "failed"
+        }
+      ],
+      "properties": {
+        "offset": {
+          "x": 1190,
+          "y": 500
+        },
+        "service": "{{trigger.message.InstanceSid}}",
+        "channel": "{{trigger.message.ChannelSid}}",
+        "from": "{{flow.channel.address}}",
+        "message_type": "custom",
+        "to": "{{contact.channel.address}}",
+        "body": "ERRO\n{{widgets.function_1.body}}"
+      }
+    },
+    {
+      "name": "function_1",
+      "type": "run-function",
+      "transitions": [
+        {
+          "next": "send_message_2",
+          "event": "success"
+        },
+        {
+          "next": "send_message_3",
+          "event": "fail"
+        }
+      ],
+      "properties": {
+        "offset": {
+          "x": 1050,
+          "y": 130
+        },
+        "parameters": [
+          {
+            "value": "GET",
+            "key": "http_method"
+          },
+          {
+            "value": "teste",
+            "key": "rota"
+          }
+        ],
+        "url": "https://persimmon-spider-9847.twil.io/nsp"
+      }
+    },
+    {
+      "name": "v1_notificacao_from",
+      "type": "set-variables",
+      "transitions": [
+        {
+          "next": "gtw1_menu_inicial",
+          "event": "next"
+        }
+      ],
+      "properties": {
+        "variables": [
+          {
+            "type": "string",
+            "value": "{{widgets.p1_menu_inicial.outbound.To}}",
+            "key": "to"
+          },
+          {
+            "type": "string",
+            "value": "{{widgets.p1_menu_inicial.outbound.Sid}}",
+            "key": "sid"
+          }
+        ],
+        "offset": {
+          "x": 230,
+          "y": 170
+        }
+      }
+    },
+    {
+      "name": "sub_notificante",
+      "type": "run-subflow",
+      "transitions": [
+        {
+          "next": "v3_notificacao_notificante",
+          "event": "completed"
+        },
+        {
+          "event": "failed"
+        }
+      ],
+      "properties": {
+        "flow_sid": "FW5fca6dba08a60c7087fc01b2263616c8",
+        "flow_revision": "LatestRevision",
+        "offset": {
+          "x": -810,
+          "y": 1530
+        }
+      }
+    },
+    {
+      "name": "v_notificacao_notificante_profissional",
+      "type": "set-variables",
+      "transitions": [
+        {
+          "next": "gtw3_notificacao_notificante_profissional",
+          "event": "next"
+        }
+      ],
+      "properties": {
+        "variables": [
+          {
+            "type": "string",
+            "value": "{{widgets.p5_notificacao_notificante_profissional.inbound.Body}}",
+            "key": "notificacao_notificante_profissional"
+          }
+        ],
+        "offset": {
+          "x": 20,
+          "y": 1810
+        }
+      }
+    },
+    {
+      "name": "sub_profissional",
+      "type": "run-subflow",
+      "transitions": [
+        {
+          "next": "v_notificacao_notificante_profissional_dados",
+          "event": "completed"
+        },
+        {
+          "event": "failed"
+        }
+      ],
+      "properties": {
+        "flow_sid": "FW61b08937e7d64dc171d30f2e85ec4c1a",
+        "flow_revision": "LatestRevision",
+        "offset": {
+          "x": -980,
+          "y": 2310
+        },
+        "parameters": [
+          {
+            "type": "string",
+            "value": "{{flow.variables.notificacao_notificante_nome}}",
+            "key": "notificante"
+          }
+        ]
+      }
+    },
+    {
+      "name": "v_notificacao_notificante_profissional_dados",
+      "type": "set-variables",
+      "transitions": [
+        {
+          "next": "p8_notificacao_paciente",
+          "event": "next"
+        }
+      ],
+      "properties": {
+        "variables": [
+          {
+            "type": "string",
+            "value": "{{widgets.sub_profissional.notificacao_notificante_profissional_ocupacao}}",
+            "key": "notificacacao_notificante_profissional_ocupacao"
+          },
+          {
+            "type": "string",
+            "value": "{{widgets.sub_profissional.notificacao_notificante_profissional_estabelecimento}}",
+            "key": "notificacao_notificante_profissional_estabelecimento"
+          }
+        ],
+        "offset": {
+          "x": -370,
+          "y": 2330
+        }
+      }
+    },
+    {
+      "name": "v_notificacao_paciente",
+      "type": "set-variables",
+      "transitions": [
+        {
+          "next": "gtw4_notificacao_paciente",
+          "event": "next"
+        }
+      ],
+      "properties": {
+        "variables": [
+          {
+            "type": "string",
+            "value": "{{widgets.p8_notificacao_paciente.inbound.Body}}",
+            "key": "notificacao_paciente"
+          }
+        ],
+        "offset": {
+          "x": 850,
+          "y": 2940
+        }
+      }
+    },
+    {
+      "name": "sub_paciente",
+      "type": "run-subflow",
+      "transitions": [
+        {
+          "next": "v13_notificacao_notificante_paciente_relacionamento",
+          "event": "completed"
+        },
+        {
+          "event": "failed"
+        }
+      ],
+      "properties": {
+        "flow_sid": "FWd6d8e79c1ce744f77b7be7dc157b7187",
+        "flow_revision": "LatestRevision",
+        "offset": {
+          "x": -640,
+          "y": 2700
+        }
+      }
+    },
+    {
+      "name": "notificacao_submit",
+      "type": "run-function",
+      "transitions": [
+        {
+          "next": "send_message_1",
+          "event": "success"
+        },
+        {
+          "next": "send_message_4",
+          "event": "fail"
+        }
+      ],
+      "properties": {
+        "offset": {
+          "x": -630,
+          "y": 3590
+        },
+        "parameters": [
+          {
+            "value": "POST",
+            "key": "http_method"
+          },
+          {
+            "value": "notificacao",
+            "key": "rota"
+          },
+          {
+            "value": "{\"tipo\":\"notificacao_evento_saude\",\"notificante_nome\": \"{{flow.variables.notificacao_notificante_nome}}\",\"notificante_email\":\"{{flow.variables.notificacao_notificante_email}}\",\"notificante_ocupacao\":\"{{flow.variables.notificacao_notificante_profissional_ocupacao}}\",\"notificante_estabelecimento\":\"{{flow.variables.notificacao_notificante_profissional_estabelecimento}}\",\"paciente_nome\":\"{{flow.variables.notificacao_paciente_nome}}\",\"paciente_nascimento\":\"{{flow.variables.notificacao_paciente_nascimento}}\",\"paciente_genero\":\"{{flow.variables.notificacao_paciente_genero}}\",\"paciente_cpf\":\"{{flow.variables.notificacao_paciente_cpf}}\",\"relacao_notificante_paciente\":\"{{flow.variables.notificacao_notificante_paciente_relacionamento}}\",\"ocorrencia\":\"{{flow.variables.notificacao_ocorrencia}}\",\"data_ocorrencia\":\"{{flow.variables.notificacao_ocorrencia_data}}\",\"contato\":\"{{flow.variables.to}}\",\"sid\":\"{{flow.variables.sid}}\" }",
+            "key": "payload"
+          }
+        ],
+        "url": "https://persimmon-spider-9847.twil.io/nsp"
+      }
+    },
+    {
+      "name": "send_message_4",
+      "type": "send-message",
+      "transitions": [
+        {
+          "event": "sent"
+        },
+        {
+          "event": "failed"
+        }
+      ],
+      "properties": {
+        "offset": {
+          "x": -530,
+          "y": 4000
+        },
+        "service": "{{trigger.message.InstanceSid}}",
+        "channel": "{{trigger.message.ChannelSid}}",
+        "from": "{{flow.channel.address}}",
+        "message_type": "custom",
+        "to": "{{contact.channel.address}}",
+        "body": "{{widgets.notificacao_submit.body}}"
+      }
+    },
+    {
+      "name": "receber_imagem",
+      "type": "send-and-wait-for-reply",
+      "transitions": [
+        {
+          "next": "send_message_6",
+          "event": "incomingMessage"
+        },
+        {
+          "event": "timeout"
+        },
+        {
+          "event": "deliveryFailure"
+        }
+      ],
+      "properties": {
+        "offset": {
+          "x": 150,
+          "y": 3890
+        },
+        "service": "{{trigger.message.InstanceSid}}",
+        "channel": "{{trigger.message.ChannelSid}}",
+        "from": "{{flow.channel.address}}",
+        "message_type": "custom",
+        "body": "Envie a sua imagem ou foto",
+        "timeout": "3600"
+      }
+    },
+    {
+      "name": "send_message_6",
+      "type": "send-message",
+      "transitions": [
+        {
+          "event": "sent"
+        },
+        {
+          "event": "failed"
+        }
+      ],
+      "properties": {
+        "offset": {
+          "x": 210,
+          "y": 4170
+        },
+        "service": "{{trigger.message.InstanceSid}}",
+        "channel": "{{trigger.message.ChannelSid}}",
+        "from": "{{flow.channel.address}}",
+        "message_type": "custom",
+        "to": "{{contact.channel.address}}",
+        "body": "essa é a imagem\n{{widgets.receber_imagem.inbound.Body}}"
+      }
+    },
+    {
+      "name": "intermediaria",
+      "type": "send-message",
+      "transitions": [
+        {
+          "next": "p5_notificacao_notificante_profissional",
+          "event": "sent"
+        },
+        {
+          "event": "failed"
+        }
+      ],
+      "properties": {
+        "offset": {
+          "x": -800,
+          "y": 1990
+        },
+        "service": "{{trigger.message.InstanceSid}}",
+        "channel": "{{trigger.message.ChannelSid}}",
+        "from": "{{flow.channel.address}}",
+        "message_type": "custom",
+        "to": "{{contact.channel.address}}",
+        "body": "Todos nós somos responsáveis por garantir que os serviços de saúde sejam prestados com o máximo de qualidade. Os profissionais prestando um serviço de qualidade e os pacientes ou familiares ou amigos de pacientes que identificarem problemas.  Temos que notificar!!"
+      }
+    }
+  ],
+  "initial_state": "Trigger",
+  "flags": {
+    "allow_concurrent_calls": true
+  }
+}

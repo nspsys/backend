@@ -1,0 +1,138 @@
+{
+  "description": "notificante",
+  "states": [
+    {
+      "name": "Trigger",
+      "type": "trigger",
+      "transitions": [
+        {
+          "event": "incomingMessage"
+        },
+        {
+          "event": "incomingCall"
+        },
+        {
+          "event": "incomingConversationMessage"
+        },
+        {
+          "event": "incomingRequest"
+        },
+        {
+          "next": "notificante_nome",
+          "event": "incomingParent"
+        }
+      ],
+      "properties": {
+        "offset": {
+          "x": -150,
+          "y": 0
+        }
+      }
+    },
+    {
+      "name": "notificante_nome",
+      "type": "send-and-wait-for-reply",
+      "transitions": [
+        {
+          "next": "v_notificante_nome",
+          "event": "incomingMessage"
+        },
+        {
+          "event": "timeout"
+        },
+        {
+          "event": "deliveryFailure"
+        }
+      ],
+      "properties": {
+        "offset": {
+          "x": -310,
+          "y": 230
+        },
+        "service": "{{trigger.message.InstanceSid}}",
+        "channel": "{{trigger.message.ChannelSid}}",
+        "from": "{{flow.channel.address}}",
+        "message_type": "custom",
+        "body": "Qual o seu nome completo, por favor?",
+        "timeout": "3600"
+      }
+    },
+    {
+      "name": "v_notificante_nome",
+      "type": "set-variables",
+      "transitions": [
+        {
+          "next": "notificante_mail",
+          "event": "next"
+        }
+      ],
+      "properties": {
+        "variables": [
+          {
+            "type": "string",
+            "value": "{{widgets.notificante_nome.inbound.Body}}",
+            "key": "notificante_nome"
+          }
+        ],
+        "offset": {
+          "x": -300,
+          "y": 460
+        }
+      }
+    },
+    {
+      "name": "notificante_mail",
+      "type": "send-and-wait-for-reply",
+      "transitions": [
+        {
+          "next": "v_notificante_mail",
+          "event": "incomingMessage"
+        },
+        {
+          "event": "timeout"
+        },
+        {
+          "event": "deliveryFailure"
+        }
+      ],
+      "properties": {
+        "offset": {
+          "x": 350,
+          "y": 220
+        },
+        "service": "{{trigger.message.InstanceSid}}",
+        "channel": "{{trigger.message.ChannelSid}}",
+        "from": "{{flow.channel.address}}",
+        "message_type": "custom",
+        "body": "Olá {{flow.variables.notificante_nome}}! \nParabéns pela iniciativa! As notificações são importantíssimas e nos ajudam a garantir um serviço de saúde de qualidade e um ambiente mais seguro para profissionais e pacientes. \nNos informe um e-mail para futuros contatos por favor.",
+        "timeout": "3600"
+      }
+    },
+    {
+      "name": "v_notificante_mail",
+      "type": "set-variables",
+      "transitions": [
+        {
+          "event": "next"
+        }
+      ],
+      "properties": {
+        "variables": [
+          {
+            "type": "string",
+            "value": "{{widgets.notificante_mail.inbound.Body}}",
+            "key": "notificante_mail"
+          }
+        ],
+        "offset": {
+          "x": 360,
+          "y": 450
+        }
+      }
+    }
+  ],
+  "initial_state": "Trigger",
+  "flags": {
+    "allow_concurrent_calls": true
+  }
+}

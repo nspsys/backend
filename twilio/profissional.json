@@ -1,0 +1,138 @@
+{
+  "description": "profissional",
+  "states": [
+    {
+      "name": "Trigger",
+      "type": "trigger",
+      "transitions": [
+        {
+          "event": "incomingMessage"
+        },
+        {
+          "event": "incomingCall"
+        },
+        {
+          "event": "incomingConversationMessage"
+        },
+        {
+          "event": "incomingRequest"
+        },
+        {
+          "next": "notificacao_notificante_profissional_ocupacao",
+          "event": "incomingParent"
+        }
+      ],
+      "properties": {
+        "offset": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "name": "notificacao_notificante_profissional_ocupacao",
+      "type": "send-and-wait-for-reply",
+      "transitions": [
+        {
+          "next": "v_notificacao_notificante_profissional_ocupacao",
+          "event": "incomingMessage"
+        },
+        {
+          "event": "timeout"
+        },
+        {
+          "event": "deliveryFailure"
+        }
+      ],
+      "properties": {
+        "offset": {
+          "x": -20,
+          "y": 290
+        },
+        "service": "{{trigger.message.InstanceSid}}",
+        "channel": "{{trigger.message.ChannelSid}}",
+        "from": "{{flow.channel.address}}",
+        "message_type": "custom",
+        "body": "Excelente {{trigger.parent.parameters.notificante}}! E qual é a sua ocupação?",
+        "timeout": "3600"
+      }
+    },
+    {
+      "name": "v_notificacao_notificante_profissional_ocupacao",
+      "type": "set-variables",
+      "transitions": [
+        {
+          "next": "notificacao_notificante_profissional_estabelecimento",
+          "event": "next"
+        }
+      ],
+      "properties": {
+        "variables": [
+          {
+            "type": "string",
+            "value": "{{widgets.notificacao_notificante_profissional_ocupacao.inbound.Body}}",
+            "key": "notificacao_notificante_profissional_ocupacao"
+          }
+        ],
+        "offset": {
+          "x": -10,
+          "y": 560
+        }
+      }
+    },
+    {
+      "name": "notificacao_notificante_profissional_estabelecimento",
+      "type": "send-and-wait-for-reply",
+      "transitions": [
+        {
+          "next": "v_notificacao_notificante_profissional_estabelecimento",
+          "event": "incomingMessage"
+        },
+        {
+          "event": "timeout"
+        },
+        {
+          "event": "deliveryFailure"
+        }
+      ],
+      "properties": {
+        "offset": {
+          "x": 660,
+          "y": 320
+        },
+        "service": "{{trigger.message.InstanceSid}}",
+        "channel": "{{trigger.message.ChannelSid}}",
+        "from": "{{flow.channel.address}}",
+        "message_type": "custom",
+        "body": "certo! E em qual unidade de saúde você trabalha?",
+        "timeout": "3600"
+      }
+    },
+    {
+      "name": "v_notificacao_notificante_profissional_estabelecimento",
+      "type": "set-variables",
+      "transitions": [
+        {
+          "event": "next"
+        }
+      ],
+      "properties": {
+        "variables": [
+          {
+            "type": "string",
+            "value": "{{widgets.notificacao_notificante_profissional_estabelecimento.inbound.Body}}",
+            "key": "notificacao_notificante_profissional_estabelecimento"
+          }
+        ],
+        "offset": {
+          "x": 670,
+          "y": 580
+        }
+      }
+    }
+  ],
+  "initial_state": "Trigger",
+  "flags": {
+    "allow_concurrent_calls": true
+  }
+}
